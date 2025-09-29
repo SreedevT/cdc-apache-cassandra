@@ -69,6 +69,14 @@ jobs:
           PULSAR_IMAGE=${PULSAR_FULL_IMAGE[0]}
           PULSAR_IMAGE_TAG=${PULSAR_FULL_IMAGE[1]}
 
-          ./gradlew -PtestPulsarImage=$PULSAR_IMAGE \
-          -PtestPulsarImageTag=$PULSAR_IMAGE_TAG \
-          ${{ matrix.module }}:test
+          # Set agent version and cassandra version for connector tests
+          if [ "${{ matrix.module }}" = "connector" ]; then
+            ./gradlew -PtestPulsarImage=$PULSAR_IMAGE \
+            -PtestPulsarImageTag=$PULSAR_IMAGE_TAG \
+            -PtestAgentVersion=c5 \
+            ${{ matrix.module }}:test
+          else
+            ./gradlew -PtestPulsarImage=$PULSAR_IMAGE \
+            -PtestPulsarImageTag=$PULSAR_IMAGE_TAG \
+            ${{ matrix.module }}:test
+          fi

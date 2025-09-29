@@ -96,18 +96,25 @@ nar {
 
 assemble.dependsOn(nar)
 
+// Default to agent-c4 and cassandra4Version for backward compatibility
+def testAgentVersion = project.hasProperty('testAgentVersion') ? project.testAgentVersion : 'c4'
+def testCassandraVersion = project.hasProperty('testCassandraVersion') ?
+    project.testCassandraVersion :
+    (testAgentVersion == 'c5' ? cassandra5Version : cassandra4Version)
+
 test {
     // Add dependency on jar task, since it will be main target for testing
-    dependsOn project(':agent-c4').shadowJar
+    dependsOn project(":agent-${testAgentVersion}").shadowJar
     dependsOn nar
 
     useJUnitPlatform()
 
     environment 'PULSAR_IMAGE', testPulsarImage + ':' + testPulsarImageTag
-    environment 'CASSANDRA_IMAGE', 'cassandra:' + cassandra4Version
+    environment 'CASSANDRA_IMAGE', 'cassandra:' + testCassandraVersion
 
     systemProperty "connectorBuildDir", buildDir
-    systemProperty "agentBuildDir", project(':agent-c4').buildDir
+    systemProperty "agentBuildDir", project(":agent-${testAgentVersion}").buildDir
+    systemProperty "agentVersion", testAgentVersion
     systemProperty "projectVersion", project.version
 }
 
