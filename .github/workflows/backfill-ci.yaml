@@ -22,12 +22,8 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Build project
-        env:
-          DSE_REPO_USERNAME: ${{ secrets.DSE_REPO_USERNAME }}
-          DSE_REPO_PASSWORD: ${{ secrets.DSE_REPO_PASSWORD }}
         run: |
-          ./gradlew -PdseRepoUsername=$DSE_REPO_USERNAME -PdseRepoPassword=$DSE_REPO_PASSWORD \
-          backfill-cli:build
+          ./gradlew backfill-cli:build
 
   test:
     needs: build
@@ -64,9 +60,6 @@ jobs:
             ${{ runner.os }}-buildx-
 
       - name: Test with Gradle
-        env:
-          DSE_REPO_USERNAME: ${{ secrets.DSE_REPO_USERNAME }}
-          DSE_REPO_PASSWORD: ${{ secrets.DSE_REPO_PASSWORD }}
         run: |
           set -e
           PREV_IFS=$IFS
@@ -75,9 +68,8 @@ jobs:
           IFS=$PREV_IFS
           PULSAR_IMAGE=${PULSAR_FULL_IMAGE[0]}
           PULSAR_IMAGE_TAG=${PULSAR_FULL_IMAGE[1]}
-          
-          ./gradlew -Pdse4 -PdseRepoUsername=$DSE_REPO_USERNAME -PdseRepoPassword=$DSE_REPO_PASSWORD \
-          -PtestPulsarImage=$PULSAR_IMAGE \
+
+          ./gradlew -PtestPulsarImage=$PULSAR_IMAGE \
           -PtestPulsarImageTag=$PULSAR_IMAGE_TAG \
           -PcassandraFamily=${{ matrix.cassandraFamily }} \
           backfill-cli:e2eTest
