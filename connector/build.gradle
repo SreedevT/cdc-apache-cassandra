@@ -104,17 +104,38 @@ def testCassandraVersion = project.hasProperty('testCassandraVersion') ?
 
 test {
     // Add dependency on jar task, since it will be main target for testing
+<<<<<<< Updated upstream
     dependsOn project(":agent-${testAgentVersion}").shadowJar
+=======
+>>>>>>> Stashed changes
     dependsOn nar
 
     useJUnitPlatform()
 
     environment 'PULSAR_IMAGE', testPulsarImage + ':' + testPulsarImageTag
+<<<<<<< Updated upstream
     environment 'CASSANDRA_IMAGE', 'cassandra:' + testCassandraVersion
 
     systemProperty "connectorBuildDir", buildDir
     systemProperty "agentBuildDir", project(":agent-${testAgentVersion}").buildDir
     systemProperty "agentVersion", testAgentVersion
+=======
+    
+    def cassandraFamily = project.hasProperty("cassandraFamily") ? project.property("cassandraFamily") : "c4"
+    if (cassandraFamily == "c4") {
+        dependsOn project(':agent-c4').shadowJar
+        systemProperty "cassandraFamily", "c4"
+        systemProperty "agentBuildDir", project(':agent-c4').buildDir
+        environment 'CASSANDRA_IMAGE', 'cassandra:' + cassandra4Version
+    } else if (cassandraFamily == "c5") {
+        dependsOn project(':agent-c5').shadowJar
+        systemProperty "cassandraFamily", "c5"
+        systemProperty "agentBuildDir", project(':agent-c5').buildDir
+        environment 'CASSANDRA_IMAGE', 'cassandra:' + cassandra5Version
+    }
+
+    systemProperty "connectorBuildDir", buildDir
+>>>>>>> Stashed changes
     systemProperty "projectVersion", project.version
 }
 

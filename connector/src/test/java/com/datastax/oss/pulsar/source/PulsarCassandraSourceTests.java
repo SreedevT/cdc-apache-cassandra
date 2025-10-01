@@ -138,14 +138,14 @@ public abstract class PulsarCassandraSourceTests {
 
         String pulsarServiceUrl = "pulsar://pulsar:" + pulsarContainer.BROKER_PORT;
         String agentBuildDir = System.getProperty("agentBuildDir");
-        String agentVersion = System.getProperty("agentVersion", "c4");
-        String agentModuleName = "agent-" + agentVersion;
+        String cassandraFamily = System.getProperty("cassandraFamily", "c4");
+        String agentName = "agent-" + cassandraFamily;
         cassandraContainer1 = CassandraContainer.createCassandraContainerWithAgent(
-                CASSANDRA_IMAGE, testNetwork, 1, agentBuildDir, agentModuleName,
-                "pulsarServiceUrl=" + pulsarServiceUrl, agentVersion);
+                CASSANDRA_IMAGE, testNetwork, 1, agentBuildDir, agentName,
+                "pulsarServiceUrl=" + pulsarServiceUrl, cassandraFamily);
         cassandraContainer2 = CassandraContainer.createCassandraContainerWithAgent(
-                CASSANDRA_IMAGE, testNetwork, 2, agentBuildDir, agentModuleName,
-                "pulsarServiceUrl=" + pulsarServiceUrl, agentVersion);
+                CASSANDRA_IMAGE, testNetwork, 2, agentBuildDir, agentName,
+                "pulsarServiceUrl=" + pulsarServiceUrl, cassandraFamily);
         cassandraContainer1.start();
         cassandraContainer2.start();
     }
